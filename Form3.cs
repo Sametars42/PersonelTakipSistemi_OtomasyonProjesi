@@ -108,7 +108,7 @@ namespace PersonelTakipSOP
                     komutBordro.Parameters.AddWithValue("@p1", txtTC.Text);
                     komutBordro.ExecuteNonQuery();
 
-                    // 2. ADIM: Artık personelin kendisini silebiliriz
+                   
                     SqlCommand komutAna = new SqlCommand("DELETE FROM Personeller WHERE TC = @p1", baglanti);
                     komutAna.Parameters.AddWithValue("@p1", txtTC.Text);
                     komutAna.ExecuteNonQuery();
