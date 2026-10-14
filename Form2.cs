@@ -31,7 +31,7 @@ namespace PersonelTakipSOP
 
         SqlBaglantisi bgl = new SqlBaglantisi();
 
-        private void btnGir_Click(object sender, EventArgs e) //Giriş Butonu Kısmı 
+        private void btnGir_Click(object sender, EventArgs e) 
         {
             SqlCommand komut = new SqlCommand("SELECT * FROM Kullanicilar WHERE KullaniciAdi=@p1 AND Sifre=@p2", bgl.baglanti());
             komut.Parameters.AddWithValue("@p1", textBox1.Text);
