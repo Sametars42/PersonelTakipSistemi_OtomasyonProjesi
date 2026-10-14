@@ -103,7 +103,7 @@ namespace PersonelTakipSOP
 
         private void btnMaasBodroKaydet_Click(object sender, EventArgs e)
         {
-            // 1. Boş geçme kontrolü (Senin orijinal kontrolün)
+            
             if (comboBoxPersonelSec.SelectedValue == null)
             {
                 MessageBox.Show("Lütfen bir personel seçin!");
@@ -113,11 +113,11 @@ namespace PersonelTakipSOP
             try
             {
                 
-                // Bağlantı açık kalmışsa kapat ve temiz bir şekilde aç
+            
                 if (baglanti.State == ConnectionState.Open) baglanti.Close();
                 baglanti.Open();
 
-                // 2. MÜKERRER KAYIT KONTROLÜ (Eklenen Kısım)
+                
                 string kontrolSorgu = "SELECT COUNT(*) FROM MaasBordro WHERE PersonelID = @p1 AND Ay = @p2 AND Yil = @p3";
                 using (SqlCommand kontrolKomut = new SqlCommand(kontrolSorgu, baglanti))
                 {
@@ -130,11 +130,11 @@ namespace PersonelTakipSOP
                     if (varMi > 0)
                     {
                         MessageBox.Show("Bu personel için bu aya ait bordro zaten mevcut!", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return; // Kayıt varsa aşağıya hiç geçme, burada dur.
+                        return; 
                     }
                 }
 
-                // 3. KAYIT İŞLEMİ (Senin orijinal INSERT kodun)
+                // 3. KAYIT İŞLEMİ 
                 string sorgu = "INSERT INTO MaasBordro (PersonelID, Ay, Yil, EkMesaiUcreti, Kesintiler, NetOdenen) VALUES (@p1, @p2, @p3, @p4, @p5, @p6)";
                 using (SqlCommand komut = new SqlCommand(sorgu, baglanti))
                 {
@@ -169,10 +169,7 @@ namespace PersonelTakipSOP
                     baglanti.Close();
                 }
             }
-            /*finally
-            {
-                bgl.baglanti().Close();
-            }*/
+            
         }
 
         private void btnMaasBodroTemizle_Click(object sender, EventArgs e)
@@ -337,7 +334,7 @@ namespace PersonelTakipSOP
 
                 if (onay == DialogResult.Yes)
                 {
-                    // Bağlantıyı açıyoruz
+                    
                     SqlCommand komutSil = new SqlCommand("DELETE FROM MaasBordro WHERE BordroID = @p1", bgl.baglanti());
                     komutSil.Parameters.AddWithValue("@p1", secilenBordroID);
 
@@ -346,10 +343,10 @@ namespace PersonelTakipSOP
 
                     MessageBox.Show("Bordro kaydı başarıyla silindi.", "Bilgi");
 
-                    // Tabloyu yenilemek için senin listeleme metodun (adı farklıysa düzelt)
+                    // Tabloyu yeniledim
                     bordroListele();
 
-                    // Seçimi sıfırla
+                    // Seçimi sıfırladım
                     secilenBordroID = "";
                 }
             }
@@ -387,25 +384,24 @@ namespace PersonelTakipSOP
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                // 1. BordroID'yi sakla
+                // BordroID'yi sakla
                 secilenBordroID = row.Cells[0].Value.ToString();
 
-                // 2. ComboBox'ta ismi seçili hale getir
-                // Eğer tabloda PersonelID sütunun 1. sıradaysa (Cells[1])
+                // ComboBox'ta ismi seçili hale getir
                 string pID = row.Cells[1].Value.ToString();
                 comboBoxPersonelSec.SelectedValue = pID;
 
-                // 3. Diğer kutuları doldur
+                // Diğer kutuları doldur
                 comboBoxAySec.Text = row.Cells[2].Value.ToString();
                 comboBoxYılSec.Text = row.Cells[3].Value.ToString();
                 txtEkMesaiUcreti.Text = row.Cells[4].Value.ToString();
                 txtKesintiler.Text = row.Cells[5].Value.ToString();
                 txtNetOdenen.Text = row.Cells[6].Value.ToString();
 
-                // 4. MAAŞI ÇEKME (HATA VERMEYEN YENİ YÖNTEM)
+                // MAAŞI ÇEKME 
                 using (SqlConnection conn = bgl.baglanti())
                 {
-                    // Bağlantı kapalıysa açalım
+                    // Bağlantıyı açalım
                     if (conn.State == ConnectionState.Closed) conn.Open();
 
                     using (SqlCommand komutMaas = new SqlCommand("SELECT Maas FROM Personeller WHERE PersonelID = @id", conn))
@@ -418,7 +414,6 @@ namespace PersonelTakipSOP
                             txtMaas.Text = sonuc.ToString();
                         }
                     }
-                    // using bloğu bittiğinde bağlantı ve parametreler otomatik temizlenir
                 }
             }
         }
@@ -442,7 +437,7 @@ namespace PersonelTakipSOP
                     return;
                 }
 
-                // DİKKAT: @p6'dan sonra virgül OLMAMALI, direkt WHERE gelmeli
+               
                 string sorgu = "UPDATE MaasBordro SET PersonelID=@p1, Ay=@p2, Yil=@p3, EkMesaiUcreti=@p4, Kesintiler=@p5, NetOdenen=@p6 WHERE BordroID=@p7";
 
                 using (SqlConnection conn = bgl.baglanti())
@@ -451,7 +446,7 @@ namespace PersonelTakipSOP
 
                     using (SqlCommand komut = new SqlCommand(sorgu, conn))
                     {
-                        // ComboBox'ta isim görünse de arka plandaki PersonelID'yi alıyoruz
+                        
                         komut.Parameters.AddWithValue("@p1", comboBoxPersonelSec.SelectedValue);
                         komut.Parameters.AddWithValue("@p2", comboBoxAySec.Text);
                         komut.Parameters.AddWithValue("@p3", comboBoxYılSec.Text);
